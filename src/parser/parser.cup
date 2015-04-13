@@ -1,0 +1,351 @@
+/*
+ * parser.cup,
+ * Edited by Terrence Tan, Tyler Harley, Harry Bartlett
+ * Last Edit: 04/22/2014
+ * Added nonterminals, grammar rules to build parse tree and AST
+ */
+
+
+/* Bantam Java Compiler and Language Toolset.
+
+   Copyright (C) 2009 by Marc Corliss (corliss@hws.edu) and 
+                         David Furcy (furcyd@uwosh.edu) and
+                         E Christopher Lewis (lewis@vmware.com).
+   ALL RIGHTS RESERVED.
+
+   The Bantam Java toolset is distributed under the following 
+   conditions:
+
+     You may make copies of the toolset for your own use and 
+     modify those copies.
+
+     All copies of the toolset must retain the author names and 
+     copyright notice.
+
+     You may not sell the toolset or distribute it in 
+     conjunction with a commerical product or service without 
+     the expressed written consent of the authors.
+
+   THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS 
+   OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE 
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A 
+   PARTICULAR PURPOSE. 
+*/
+
+/* code below is copied to the file containing the parser */
+
+package parser;
+
+/* import the AST and utility class files */
+import lexer.*;
+import ast.*;
+import util.ErrorHandler;
+/* import Symbol class, which represents the type of token passed
+   from the lexer to the parser.  Note: in the lexer package there is
+   a file Token.java that  defines a subclass of Symbol called Token,
+   which is what is actually passed to the parser */
+import java_cup.runtime.Symbol;
+
+/* the code below is copied to the class containing the context-free
+   grammar productions */
+action code {: 
+    /** object for error handling */
+    private ErrorHandler errorHandler = new ErrorHandler();
+
+    /* sets the error handler */
+    public ErrorHandler getErrorHandler() {
+		return errorHandler;
+    }
+
+    /* returns the current line number from the scanner */
+    public int getCurrLineNum() {
+		return ((Lexer)parser.getScanner()).getCurrLineNum();
+    }
+
+    /* returns the current file name from the scanner */
+    public String getCurrFilename() {
+		return ((Lexer)parser.getScanner()).getCurrFilename();
+    }
+:} 
+
+/* code below is copied to the Parser class, which drives parsing */
+parser code {:
+/*
+ * parser.cup,
+ * Edited by Ian Tibbetts, Nick Aalberg and Jinghui Yu
+ * Last Edit: 02/25/2014
+ * Added nonterminals, grammar rules to build parse tree and AST
+ */
+    /** overrides done_parsing in inherited class, called when parsing finishes
+      * either after accepting or because of errors
+      * */
+    public void done_parsing() {
+		super.done_parsing();
+		// if lexing and/or parsing errors then exit
+		action_obj.getErrorHandler().checkErrors();
+    }
+
+    /** overrides syntax_error in inherited class and handles syntax errors 
+      * @param curr current symbol from the lexer
+      * */
+    public void syntax_error(Symbol curr) {
+		// get token value from the symbol
+		Token t = (Token)curr.value;
+	
+		// get the error handler object
+		ErrorHandler errorHandler = action_obj.getErrorHandler();
+
+		// may want to modify and augment the code below for more
+		// accurate error reporting
+		errorHandler.register(errorHandler.PARSE_ERROR, action_obj.getCurrFilename(), 
+			      action_obj.getCurrLineNum(), 
+			      "unexpected input near '" + t.getLexeme() + "'");
+    }
+
+    /** override error_sync_size in inherited class and
+      * change the minimum number of tokens to skip on an error from 3 to 2
+      * @return minimum number of tokens to skip on an error
+      * */
+    protected int error_sync_size() {
+		return 2;
+    }
+:}
+
+/* list of terminals, which correspond to tokens returned by the lexer
+ */
+terminal Token LEX_ERROR;
+terminal Token SONG, PHRASE, NOTE, OCTAVE, REST;
+terminal Token LENGTH, ACCIDENTAL;
+terminal Token LPAREN, RPAREN, LBRACE, RBRACE;
+terminal Token REPEAT, SEMI, VOLUME, INSTRUMENT, TEMPO;
+terminal Token OCTAVEINTCONST, OCTAVEMODVAL, VOLUMEWORD;
+terminal Token STRING_CONST, TEMPOINTCONST;
+
+/* list of non-terminals used in context-free grammar
+   format: nonterminal <type> <list of nonterminal names>
+   example: nonterminal Expr expr1, expr2
+   The type specifies what type of result the non-terminal will return
+   The type should correspond to a class name from the AST
+*/
+nonterminal Song song;
+nonterminal File file;
+nonterminal PhraseList phraseList; 
+nonterminal Phrase phrase;
+nonterminal PhraseDispatch phraseDispatch;
+nonterminal Expr expr;
+nonterminal ExprList exprList;
+nonterminal OctaveBlock octaveBlock;
+nonterminal NoteExpr noteExpr;
+nonterminal OctaveValue octaveValue;
+nonterminal Note note;
+nonterminal NoteLiteral noteLiteral;
+nonterminal OctaveIntConst octaveIntConst;
+nonterminal OctaveModVal octaveModVal;
+nonterminal Accidental accidental;
+nonterminal ConstStringExpr constStringExpr;
+nonterminal BlockExpr blockExpr;
+nonterminal RepeatBlock repeatBlock;
+nonterminal VolumeBlock volumeBlock;
+nonterminal InstrumentBlock instrumentBlock;
+nonterminal TempoBlock tempoBlock;
+nonterminal VolumeWord volumeWord;
+
+/* precedence/associativity rules
+   format: precedence <associativity> <list of terminals>
+   example: precedence right ASSIGN
+   precedence specified by order (from lowest to highest)
+   note: use a single precedence rule for terminals with same precedence
+   associativity specfied by middle operand (left, right, none)
+*/
+/* add precedence rules... */
+
+/* File, which is simply a list of phrases and a Song */
+file::=
+	phraseList:pl song:s
+	    {: RESULT = new File(getCurrLineNum(),pl, s); :}
+	|
+	song:s
+		{: RESULT = new File(getCurrLineNum(),null,s); :}
+   	;
+   	
+/* a song */
+song ::=
+	SONG STRING_CONST:name TEMPOINTCONST: t LBRACE exprList:el RBRACE
+		{: RESULT = new Song(getCurrLineNum(),name.getAttribute(), t.getAttribute(), el); :}
+	;
+
+
+/* list of phrases */
+phraseList ::=
+	/* single phrase */
+   	phrase:p
+     	{: RESULT = (PhraseList)(new PhraseList(0)).addElement(p); :}
+	/* several phrases */
+	| phraseList:pl phrase:p
+	    {: RESULT = (PhraseList)pl.addElement(p); :}
+	;
+
+/* a single phrase */
+phrase ::=
+  	PHRASE STRING_CONST:name LBRACE exprList:el RBRACE
+	    {: RESULT = new Phrase(getCurrLineNum(),name.getAttribute(), el); :}
+	;
+
+
+/* expression list */
+exprList ::=
+	/* single note expression*/
+	expr: e
+		{: RESULT = (ExprList)(new ExprList(0)).addElement(e); :}
+	|
+	/* multiple note expression*/
+	exprList:el	expr:e
+		{: RESULT = (ExprList)el.addElement(e); :}	
+	;
+/* expression */
+expr ::=
+	noteExpr:ne
+		{: RESULT = (NoteExpr)ne; :}
+	|
+	/* block */
+	blockExpr: be
+		{: RESULT = (BlockExpr)be; :}
+	;
+	
+blockExpr ::=	
+	octaveBlock: ob
+		{: RESULT = (OctaveBlock)ob; :}
+	|
+	/*volume block*/
+	volumeBlock: vb
+		{: RESULT = (VolumeBlock)vb; :}
+	|
+	repeatBlock:rb
+		{: RESULT = (RepeatBlock)rb; :}
+	|
+	instrumentBlock:ib
+		{: RESULT = (InstrumentBlock)ib; :}
+	|
+	tempoBlock:tb
+		{: RESULT = (TempoBlock)tb; :}
+	;
+
+/* octave block*/
+octaveBlock ::=
+	OCTAVE octaveValue:val LBRACE exprList:el RBRACE 
+		{: RESULT = new OctaveBlock(getCurrLineNum(),val, el); :}
+	;
+	
+
+/* repeat block*/
+repeatBlock ::=
+	REPEAT LBRACE exprList:el RBRACE 
+		{: RESULT = new RepeatBlock(getCurrLineNum(), el); :}
+	;
+	
+/* volume block*/
+volumeBlock ::=
+	VOLUME volumeWord:vw LBRACE exprList:el RBRACE 
+		{: RESULT = new VolumeBlock(getCurrLineNum(), vw, el); :}
+	;
+/* Instrument block*/
+instrumentBlock ::=
+	INSTRUMENT constStringExpr:s LBRACE exprList:el RBRACE 
+		{: RESULT = new InstrumentBlock(getCurrLineNum(), s, el); :}
+	;
+
+/* Tempo block*/
+tempoBlock ::=
+	TEMPO TEMPOINTCONST: tic LBRACE exprList:el RBRACE 
+		{: RESULT = new TempoBlock(getCurrLineNum(), tic.getAttribute(), el); :}
+	;
+
+
+
+
+/* volume word */
+volumeWord ::=
+		VOLUMEWORD:vw
+	    {: RESULT = new VolumeWord(getCurrLineNum(),vw.getAttribute()); :}
+	;
+	
+/* Note Expression*/
+noteExpr ::=
+	/* phrase expression*/
+	phraseDispatch:p
+		{: RESULT = (PhraseDispatch)p; :}
+	|
+	/* note literal*/
+	noteLiteral:n
+		{: RESULT =  (NoteLiteral)n; :}
+
+	;
+
+/* Note Literal*/
+noteLiteral ::=
+	/* note expr with specified octave value */
+	LENGTH: len note:n octaveValue: val
+		{: RESULT = new NoteLiteral(getCurrLineNum(),len.getAttribute(), n,null, val); :}
+	|
+	/* note expr without specified octave value with accidental */
+	LENGTH:len note:n accidental:a
+		{: RESULT = new NoteLiteral(getCurrLineNum(),len.getAttribute(), n,a, null); :}
+	|
+	/* note expr with specified octave valuewith accidental */
+	LENGTH: len note:n accidental:a octaveValue: val
+		{: RESULT = new NoteLiteral(getCurrLineNum(),len.getAttribute(), n,a, val); :}	
+	|
+	/* note expr without specified octave value */
+	LENGTH:len note:n 
+		{: RESULT = new NoteLiteral(getCurrLineNum(),len.getAttribute(), n,null, null); :}
+	;
+
+	
+/* Octave value */
+octaveValue ::=
+		octaveIntConst:oi
+	    {: RESULT = (OctaveIntConst)oi; :}
+	   |
+	  	octaveModVal:om
+	  	{: RESULT = (OctaveModVal)om; :}
+	;
+	
+/* Octave int constant */
+octaveIntConst ::=
+		OCTAVEINTCONST:oi
+	    {: RESULT = new OctaveIntConst(getCurrLineNum(),oi.getAttribute()); :}
+	;
+	
+/* Octave mod constant */
+octaveModVal ::= 
+		OCTAVEMODVAL:om
+	    {: RESULT = new OctaveModVal(getCurrLineNum(),om.getAttribute()); :}
+	;
+
+
+/* note */
+note ::=
+		/* note */
+		NOTE: n
+		{: RESULT = new Note(getCurrLineNum(),n.getAttribute()); :}
+		|
+		/* rest note*/
+		REST:r
+		{: RESULT = new Rest(getCurrLineNum(), r.getAttribute() ); :}
+	;
+accidental::=
+	ACCIDENTAL:a
+	{: RESULT = new Accidental(getCurrLineNum(),a.getAttribute()); :}
+	
+	;
+phraseDispatch::=
+	constStringExpr:s LPAREN RPAREN
+	{: RESULT = new PhraseDispatch(getCurrLineNum(),s); :}
+	
+	;
+constStringExpr::=
+	STRING_CONST:s
+	{: RESULT = new ConstStringExpr(getCurrLineNum(),s.getAttribute()); :}
+	
+	;
+

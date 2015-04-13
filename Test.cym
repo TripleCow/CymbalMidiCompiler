@@ -1,0 +1,28 @@
+//Test.cym
+//Authors:Harry Bartlett, Terrence Tan, Tyler Harley
+//Date: 4/27/2014
+//Examples of basic Cymbal 1.0 code
+//Contains examples of Phrases, Octave Blocks, Rests and notes of
+//of varying lengths
+//
+
+Phrase "BbScale"{
+
+		Whole Bb3
+		Half C3
+		Half D3
+		Quarter Eb3
+		Quarter F3
+		Quarter G3
+		Quarter A4
+		Whole Bb4
+	
+}
+
+
+
+Song "Scales" 60 {
+	"BbScale"()
+	
+}
+

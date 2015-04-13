@@ -1,0 +1,19 @@
+Song "Scales" {
+	Volume piano{
+		Quarter C3
+	}
+	Quarter C3	
+	Volume mesopiano{
+		Quarter C3	
+		}
+	Quarter C3	
+	Volume mesoforte{
+		Quarter C3	
+		}
+	Quarter C3		
+	Volume forte{
+		Quarter C3	
+		}
+	Quarter C3
+}		
+

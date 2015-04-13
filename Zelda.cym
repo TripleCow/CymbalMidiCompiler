@@ -1,0 +1,124 @@
+//Test.cym
+//Authors:Harry Bartlett, Terrence Tan, Tyler Harley
+//Date: 4/27/2014
+//Examples of basic Cymbal 1.0 code
+//Contains examples of Phrases, Octave Blocks, Rests and notes of
+//of varying lengths
+//
+
+Phrase "Song_of_Time"{
+	Repeat{
+		//Quarter A
+		//Half D-
+		//Quarter F-
+		Quarter A+
+		Half D
+		Quarter F
+	}
+	Eighth A+
+	Eighth C+
+	Quarter B+
+	Quarter G
+	Eighth F
+	Eighth G
+	Quarter A+
+	Quarter D
+	Eighth C
+	Eighth E
+	Half D
+}
+
+
+Phrase "LightTemple"{
+		Quarter D
+		Eighth A
+		Eighth Rest
+		Eighth D
+		Eighth A
+		Eighth B
+
+}
+
+
+Phrase "ForestTemple"{
+	Quarter D-
+	Quarter D
+	Half B
+	Quarter A
+	Quarter B
+	Quarter A
+}
+
+Phrase "FireTemple"{
+	Repeat{
+		Quarter F-
+		Quarter D-
+	}
+	Repeat{
+		Quarter A
+		Quarter F-
+	}
+}
+
+Phrase "WaterTemple"{
+	Quarter D-
+	Quarter F-
+	Quarter A
+	Quarter A
+	Quarter B	
+}
+
+Phrase "ShadowTemple"{
+	Quarter B
+	Eighth A
+	Quarter A
+	Quarter D-
+	Quarter B
+	Quarter A
+	Quarter F-
+}
+
+Phrase "SpiritTemple"{
+	Quarter D-
+	Eighth F-
+	Quarter D-
+	Quarter A
+	Quarter F-
+	Quarter D-
+	
+}
+
+Song "Scales" 120 {
+	
+	Volume mesoforte{
+	Instrument "Acoustic Grand Piano"{	
+		Volume piano{
+			Octave 3{
+				"Song_of_Time"()
+			}
+		}
+		Half Rest
+		Octave 5{
+			"Song_of_Time"()
+		}
+		Half Rest
+		Volume forte{
+			Octave 4{
+				Instrument "Jazz Guitar"{
+					"Song_of_Time"()
+				}
+			}
+		}
+/*		"ForestTemple"()
+		Half Rest
+		"FireTemple"()
+		Half Rest
+		"WaterTemple"()
+		Half Rest
+		"ShadowTemple"()
+		Half Rest
+		"SpiritTemple"()*/
+	}
+	}
+}
+

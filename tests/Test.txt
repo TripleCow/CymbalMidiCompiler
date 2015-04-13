@@ -1,0 +1,8 @@
+Song "Hello" {
+	Quarter C4
+	Quarter C5
+	Quarter G1
+	Half	A2
+	Whole	B7
+	Eighth	E2
+}

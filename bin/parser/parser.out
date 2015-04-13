@@ -1,0 +1,1501 @@
+Opening files...
+Parsing specification from standard input...
+Checking specification...
+Warning: Terminal "SEMI" was declared but never used
+Warning: Terminal "LEX_ERROR" was declared but never used
+Building parse tables...
+  Computing non-terminal nullability...
+  Computing first sets...
+  Building state machine...
+  Filling in tables...
+  Checking for non-reduced productions...
+Writing parser...
+===== Terminals =====
+[0]EOF [1]error [2]LEX_ERROR [3]SONG [4]PHRASE 
+[5]NOTE [6]OCTAVE [7]REST [8]LENGTH [9]ACCIDENTAL 
+[10]LPAREN [11]RPAREN [12]LBRACE [13]RBRACE [14]REPEAT 
+[15]SEMI [16]VOLUME [17]INSTRUMENT [18]TEMPO [19]OCTAVEINTCONST 
+[20]OCTAVEMODVAL [21]VOLUMEWORD [22]STRING_CONST [23]TEMPOINTCONST 
+
+===== Non terminals =====
+[0]$START [1]song [2]file [3]phraseList [4]phrase 
+[5]phraseDispatch [6]expr [7]exprList [8]octaveBlock [9]noteExpr 
+[10]octaveValue [11]note [12]noteLiteral [13]octaveIntConst [14]octaveModVal 
+[15]accidental [16]constStringExpr [17]blockExpr [18]repeatBlock [19]volumeBlock 
+[20]instrumentBlock [21]tempoBlock [22]volumeWord 
+
+===== Productions =====
+[0] file ::= phraseList song 
+[1] $START ::= file EOF 
+[2] file ::= song 
+[3] song ::= SONG STRING_CONST TEMPOINTCONST LBRACE exprList RBRACE 
+[4] phraseList ::= phrase 
+[5] phraseList ::= phraseList phrase 
+[6] phrase ::= PHRASE STRING_CONST LBRACE exprList RBRACE 
+[7] exprList ::= expr 
+[8] exprList ::= exprList expr 
+[9] expr ::= noteExpr 
+[10] expr ::= blockExpr 
+[11] blockExpr ::= octaveBlock 
+[12] blockExpr ::= volumeBlock 
+[13] blockExpr ::= repeatBlock 
+[14] blockExpr ::= instrumentBlock 
+[15] blockExpr ::= tempoBlock 
+[16] octaveBlock ::= OCTAVE octaveValue LBRACE exprList RBRACE 
+[17] repeatBlock ::= REPEAT LBRACE exprList RBRACE 
+[18] volumeBlock ::= VOLUME volumeWord LBRACE exprList RBRACE 
+[19] instrumentBlock ::= INSTRUMENT constStringExpr LBRACE exprList RBRACE 
+[20] tempoBlock ::= TEMPO TEMPOINTCONST LBRACE exprList RBRACE 
+[21] volumeWord ::= VOLUMEWORD 
+[22] noteExpr ::= phraseDispatch 
+[23] noteExpr ::= noteLiteral 
+[24] noteLiteral ::= LENGTH note octaveValue 
+[25] noteLiteral ::= LENGTH note accidental 
+[26] noteLiteral ::= LENGTH note accidental octaveValue 
+[27] noteLiteral ::= LENGTH note 
+[28] octaveValue ::= octaveIntConst 
+[29] octaveValue ::= octaveModVal 
+[30] octaveIntConst ::= OCTAVEINTCONST 
+[31] octaveModVal ::= OCTAVEMODVAL 
+[32] note ::= NOTE 
+[33] note ::= REST 
+[34] accidental ::= ACCIDENTAL 
+[35] phraseDispatch ::= constStringExpr LPAREN RPAREN 
+[36] constStringExpr ::= STRING_CONST 
+
+===== Viable Prefix Recognizer =====
+START lalr_state [0]: {
+  [phraseList ::= (*) phraseList phrase , {SONG PHRASE }]
+  [file ::= (*) song , {EOF }]
+  [phraseList ::= (*) phrase , {SONG PHRASE }]
+  [$START ::= (*) file EOF , {EOF }]
+  [phrase ::= (*) PHRASE STRING_CONST LBRACE exprList RBRACE , {SONG PHRASE }]
+  [song ::= (*) SONG STRING_CONST TEMPOINTCONST LBRACE exprList RBRACE , {EOF }]
+  [file ::= (*) phraseList song , {EOF }]
+}
+transition on PHRASE to state [6]
+transition on song to state [5]
+transition on file to state [4]
+transition on SONG to state [3]
+transition on phraseList to state [2]
+transition on phrase to state [1]
+
+-------------------
+lalr_state [1]: {
+  [phraseList ::= phrase (*) , {SONG PHRASE }]
+}
+
+-------------------
+lalr_state [2]: {
+  [phraseList ::= phraseList (*) phrase , {SONG PHRASE }]
+  [phrase ::= (*) PHRASE STRING_CONST LBRACE exprList RBRACE , {SONG PHRASE }]
+  [song ::= (*) SONG STRING_CONST TEMPOINTCONST LBRACE exprList RBRACE , {EOF }]
+  [file ::= phraseList (*) song , {EOF }]
+}
+transition on PHRASE to state [6]
+transition on song to state [70]
+transition on SONG to state [3]
+transition on phrase to state [69]
+
+-------------------
+lalr_state [3]: {
+  [song ::= SONG (*) STRING_CONST TEMPOINTCONST LBRACE exprList RBRACE , {EOF }]
+}
+transition on STRING_CONST to state [64]
+
+-------------------
+lalr_state [4]: {
+  [$START ::= file (*) EOF , {EOF }]
+}
+transition on EOF to state [63]
+
+-------------------
+lalr_state [5]: {
+  [file ::= song (*) , {EOF }]
+}
+
+-------------------
+lalr_state [6]: {
+  [phrase ::= PHRASE (*) STRING_CONST LBRACE exprList RBRACE , {SONG PHRASE }]
+}
+transition on STRING_CONST to state [7]
+
+-------------------
+lalr_state [7]: {
+  [phrase ::= PHRASE STRING_CONST (*) LBRACE exprList RBRACE , {SONG PHRASE }]
+}
+transition on LBRACE to state [8]
+
+-------------------
+lalr_state [8]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phrase ::= PHRASE STRING_CONST LBRACE (*) exprList RBRACE , {SONG PHRASE }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [18]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [9]: {
+  [constStringExpr ::= STRING_CONST (*) , {LPAREN LBRACE }]
+}
+
+-------------------
+lalr_state [10]: {
+  [blockExpr ::= repeatBlock (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [11]: {
+  [exprList ::= expr (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [12]: {
+  [noteExpr ::= noteLiteral (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [13]: {
+  [octaveIntConst ::= (*) OCTAVEINTCONST , {LBRACE }]
+  [octaveBlock ::= OCTAVE (*) octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveValue ::= (*) octaveModVal , {LBRACE }]
+  [octaveModVal ::= (*) OCTAVEMODVAL , {LBRACE }]
+  [octaveValue ::= (*) octaveIntConst , {LBRACE }]
+}
+transition on octaveValue to state [59]
+transition on octaveModVal to state [42]
+transition on OCTAVEINTCONST to state [41]
+transition on OCTAVEMODVAL to state [38]
+transition on octaveIntConst to state [37]
+
+-------------------
+lalr_state [14]: {
+  [expr ::= noteExpr (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [15]: {
+  [constStringExpr ::= (*) STRING_CONST , {LBRACE }]
+  [instrumentBlock ::= INSTRUMENT (*) constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on constStringExpr to state [55]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [16]: {
+  [volumeWord ::= (*) VOLUMEWORD , {LBRACE }]
+  [volumeBlock ::= VOLUME (*) volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on VOLUMEWORD to state [51]
+transition on volumeWord to state [50]
+
+-------------------
+lalr_state [17]: {
+  [tempoBlock ::= TEMPO (*) TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on TEMPOINTCONST to state [46]
+
+-------------------
+lalr_state [18]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phrase ::= PHRASE STRING_CONST LBRACE exprList (*) RBRACE , {SONG PHRASE }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [45]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [19]: {
+  [blockExpr ::= octaveBlock (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [20]: {
+  [blockExpr ::= instrumentBlock (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [21]: {
+  [noteExpr ::= phraseDispatch (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [22]: {
+  [noteLiteral ::= LENGTH (*) note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH (*) note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [note ::= (*) NOTE , {OCTAVE LENGTH ACCIDENTAL RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+  [noteLiteral ::= LENGTH (*) note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH (*) note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [note ::= (*) REST , {OCTAVE LENGTH ACCIDENTAL RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+}
+transition on NOTE to state [36]
+transition on REST to state [35]
+transition on note to state [34]
+
+-------------------
+lalr_state [23]: {
+  [phraseDispatch ::= constStringExpr (*) LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LPAREN to state [32]
+
+-------------------
+lalr_state [24]: {
+  [blockExpr ::= volumeBlock (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [25]: {
+  [expr ::= blockExpr (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [26]: {
+  [repeatBlock ::= REPEAT (*) LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LBRACE to state [28]
+
+-------------------
+lalr_state [27]: {
+  [blockExpr ::= tempoBlock (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [28]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= REPEAT LBRACE (*) exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [29]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [29]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= REPEAT LBRACE exprList (*) RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [31]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [30]: {
+  [exprList ::= exprList expr (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [31]: {
+  [repeatBlock ::= REPEAT LBRACE exprList RBRACE (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [32]: {
+  [phraseDispatch ::= constStringExpr LPAREN (*) RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on RPAREN to state [33]
+
+-------------------
+lalr_state [33]: {
+  [phraseDispatch ::= constStringExpr LPAREN RPAREN (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [34]: {
+  [accidental ::= (*) ACCIDENTAL , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+  [noteLiteral ::= LENGTH note (*) accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveModVal ::= (*) OCTAVEMODVAL , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveValue ::= (*) octaveIntConst , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH note (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveIntConst ::= (*) OCTAVEINTCONST , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH note (*) octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH note (*) accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveValue ::= (*) octaveModVal , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on octaveValue to state [43]
+transition on octaveModVal to state [42]
+transition on OCTAVEINTCONST to state [41]
+transition on ACCIDENTAL to state [40]
+transition on accidental to state [39]
+transition on OCTAVEMODVAL to state [38]
+transition on octaveIntConst to state [37]
+
+-------------------
+lalr_state [35]: {
+  [note ::= REST (*) , {OCTAVE LENGTH ACCIDENTAL RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+}
+
+-------------------
+lalr_state [36]: {
+  [note ::= NOTE (*) , {OCTAVE LENGTH ACCIDENTAL RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+}
+
+-------------------
+lalr_state [37]: {
+  [octaveValue ::= octaveIntConst (*) , {OCTAVE LENGTH LBRACE RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [38]: {
+  [octaveModVal ::= OCTAVEMODVAL (*) , {OCTAVE LENGTH LBRACE RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [39]: {
+  [octaveIntConst ::= (*) OCTAVEINTCONST , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH note accidental (*) octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveValue ::= (*) octaveModVal , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= LENGTH note accidental (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveModVal ::= (*) OCTAVEMODVAL , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveValue ::= (*) octaveIntConst , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on octaveValue to state [44]
+transition on octaveModVal to state [42]
+transition on OCTAVEINTCONST to state [41]
+transition on OCTAVEMODVAL to state [38]
+transition on octaveIntConst to state [37]
+
+-------------------
+lalr_state [40]: {
+  [accidental ::= ACCIDENTAL (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO OCTAVEINTCONST OCTAVEMODVAL STRING_CONST }]
+}
+
+-------------------
+lalr_state [41]: {
+  [octaveIntConst ::= OCTAVEINTCONST (*) , {OCTAVE LENGTH LBRACE RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [42]: {
+  [octaveValue ::= octaveModVal (*) , {OCTAVE LENGTH LBRACE RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [43]: {
+  [noteLiteral ::= LENGTH note octaveValue (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [44]: {
+  [noteLiteral ::= LENGTH note accidental octaveValue (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [45]: {
+  [phrase ::= PHRASE STRING_CONST LBRACE exprList RBRACE (*) , {SONG PHRASE }]
+}
+
+-------------------
+lalr_state [46]: {
+  [tempoBlock ::= TEMPO TEMPOINTCONST (*) LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LBRACE to state [47]
+
+-------------------
+lalr_state [47]: {
+  [tempoBlock ::= TEMPO TEMPOINTCONST LBRACE (*) exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [48]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [48]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= TEMPO TEMPOINTCONST LBRACE exprList (*) RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [49]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [49]: {
+  [tempoBlock ::= TEMPO TEMPOINTCONST LBRACE exprList RBRACE (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [50]: {
+  [volumeBlock ::= VOLUME volumeWord (*) LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LBRACE to state [52]
+
+-------------------
+lalr_state [51]: {
+  [volumeWord ::= VOLUMEWORD (*) , {LBRACE }]
+}
+
+-------------------
+lalr_state [52]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= VOLUME volumeWord LBRACE (*) exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [53]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [53]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= VOLUME volumeWord LBRACE exprList (*) RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [54]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [54]: {
+  [volumeBlock ::= VOLUME volumeWord LBRACE exprList RBRACE (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [55]: {
+  [instrumentBlock ::= INSTRUMENT constStringExpr (*) LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LBRACE to state [56]
+
+-------------------
+lalr_state [56]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [instrumentBlock ::= INSTRUMENT constStringExpr LBRACE (*) exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [57]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [57]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [instrumentBlock ::= INSTRUMENT constStringExpr LBRACE exprList (*) RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [58]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [58]: {
+  [instrumentBlock ::= INSTRUMENT constStringExpr LBRACE exprList RBRACE (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [59]: {
+  [octaveBlock ::= OCTAVE octaveValue (*) LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on LBRACE to state [60]
+
+-------------------
+lalr_state [60]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= OCTAVE octaveValue LBRACE (*) exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [61]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [61]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= OCTAVE octaveValue LBRACE exprList (*) RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [62]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [62]: {
+  [octaveBlock ::= OCTAVE octaveValue LBRACE exprList RBRACE (*) , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+
+-------------------
+lalr_state [63]: {
+  [$START ::= file EOF (*) , {EOF }]
+}
+
+-------------------
+lalr_state [64]: {
+  [song ::= SONG STRING_CONST (*) TEMPOINTCONST LBRACE exprList RBRACE , {EOF }]
+}
+transition on TEMPOINTCONST to state [65]
+
+-------------------
+lalr_state [65]: {
+  [song ::= SONG STRING_CONST TEMPOINTCONST (*) LBRACE exprList RBRACE , {EOF }]
+}
+transition on LBRACE to state [66]
+
+-------------------
+lalr_state [66]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [song ::= SONG STRING_CONST TEMPOINTCONST LBRACE (*) exprList RBRACE , {EOF }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) exprList expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on exprList to state [67]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on noteLiteral to state [12]
+transition on expr to state [11]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [67]: {
+  [expr ::= (*) blockExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) tempoBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [tempoBlock ::= (*) TEMPO TEMPOINTCONST LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [song ::= SONG STRING_CONST TEMPOINTCONST LBRACE exprList (*) RBRACE , {EOF }]
+  [noteLiteral ::= (*) LENGTH note accidental , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [phraseDispatch ::= (*) constStringExpr LPAREN RPAREN , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [exprList ::= exprList (*) expr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) repeatBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [volumeBlock ::= (*) VOLUME volumeWord LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) noteLiteral , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) octaveBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [octaveBlock ::= (*) OCTAVE octaveValue LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note accidental octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [constStringExpr ::= (*) STRING_CONST , {LPAREN }]
+  [expr ::= (*) noteExpr , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) instrumentBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [instrumentBlock ::= (*) INSTRUMENT constStringExpr LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note octaveValue , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [blockExpr ::= (*) volumeBlock , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [repeatBlock ::= (*) REPEAT LBRACE exprList RBRACE , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteExpr ::= (*) phraseDispatch , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+  [noteLiteral ::= (*) LENGTH note , {OCTAVE LENGTH RBRACE REPEAT VOLUME INSTRUMENT TEMPO STRING_CONST }]
+}
+transition on tempoBlock to state [27]
+transition on REPEAT to state [26]
+transition on blockExpr to state [25]
+transition on volumeBlock to state [24]
+transition on constStringExpr to state [23]
+transition on LENGTH to state [22]
+transition on phraseDispatch to state [21]
+transition on instrumentBlock to state [20]
+transition on octaveBlock to state [19]
+transition on TEMPO to state [17]
+transition on VOLUME to state [16]
+transition on INSTRUMENT to state [15]
+transition on noteExpr to state [14]
+transition on OCTAVE to state [13]
+transition on RBRACE to state [68]
+transition on noteLiteral to state [12]
+transition on expr to state [30]
+transition on repeatBlock to state [10]
+transition on STRING_CONST to state [9]
+
+-------------------
+lalr_state [68]: {
+  [song ::= SONG STRING_CONST TEMPOINTCONST LBRACE exprList RBRACE (*) , {EOF }]
+}
+
+-------------------
+lalr_state [69]: {
+  [phraseList ::= phraseList phrase (*) , {SONG PHRASE }]
+}
+
+-------------------
+lalr_state [70]: {
+  [file ::= phraseList song (*) , {EOF }]
+}
+
+-------------------
+-------- ACTION_TABLE --------
+From state #0
+ [term 3:SHIFT(to state 3)] [term 4:SHIFT(to state 6)]
+From state #1
+ [term 3:REDUCE(with prod 4)] [term 4:REDUCE(with prod 4)]
+From state #2
+ [term 3:SHIFT(to state 3)] [term 4:SHIFT(to state 6)]
+From state #3
+ [term 22:SHIFT(to state 64)]
+From state #4
+ [term 0:SHIFT(to state 63)]
+From state #5
+ [term 0:REDUCE(with prod 2)]
+From state #6
+ [term 22:SHIFT(to state 7)]
+From state #7
+ [term 12:SHIFT(to state 8)]
+From state #8
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #9
+ [term 10:REDUCE(with prod 36)] [term 12:REDUCE(with prod 36)]
+From state #10
+ [term 6:REDUCE(with prod 13)] [term 8:REDUCE(with prod 13)]
+ [term 13:REDUCE(with prod 13)] [term 14:REDUCE(with prod 13)]
+ [term 16:REDUCE(with prod 13)] [term 17:REDUCE(with prod 13)]
+ [term 18:REDUCE(with prod 13)] [term 22:REDUCE(with prod 13)]
+From state #11
+ [term 6:REDUCE(with prod 7)] [term 8:REDUCE(with prod 7)]
+ [term 13:REDUCE(with prod 7)] [term 14:REDUCE(with prod 7)]
+ [term 16:REDUCE(with prod 7)] [term 17:REDUCE(with prod 7)]
+ [term 18:REDUCE(with prod 7)] [term 22:REDUCE(with prod 7)]
+From state #12
+ [term 6:REDUCE(with prod 23)] [term 8:REDUCE(with prod 23)]
+ [term 13:REDUCE(with prod 23)] [term 14:REDUCE(with prod 23)]
+ [term 16:REDUCE(with prod 23)] [term 17:REDUCE(with prod 23)]
+ [term 18:REDUCE(with prod 23)] [term 22:REDUCE(with prod 23)]
+From state #13
+ [term 19:SHIFT(to state 41)] [term 20:SHIFT(to state 38)]
+From state #14
+ [term 6:REDUCE(with prod 9)] [term 8:REDUCE(with prod 9)]
+ [term 13:REDUCE(with prod 9)] [term 14:REDUCE(with prod 9)]
+ [term 16:REDUCE(with prod 9)] [term 17:REDUCE(with prod 9)]
+ [term 18:REDUCE(with prod 9)] [term 22:REDUCE(with prod 9)]
+From state #15
+ [term 22:SHIFT(to state 9)]
+From state #16
+ [term 21:SHIFT(to state 51)]
+From state #17
+ [term 23:SHIFT(to state 46)]
+From state #18
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 45)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #19
+ [term 6:REDUCE(with prod 11)] [term 8:REDUCE(with prod 11)]
+ [term 13:REDUCE(with prod 11)] [term 14:REDUCE(with prod 11)]
+ [term 16:REDUCE(with prod 11)] [term 17:REDUCE(with prod 11)]
+ [term 18:REDUCE(with prod 11)] [term 22:REDUCE(with prod 11)]
+From state #20
+ [term 6:REDUCE(with prod 14)] [term 8:REDUCE(with prod 14)]
+ [term 13:REDUCE(with prod 14)] [term 14:REDUCE(with prod 14)]
+ [term 16:REDUCE(with prod 14)] [term 17:REDUCE(with prod 14)]
+ [term 18:REDUCE(with prod 14)] [term 22:REDUCE(with prod 14)]
+From state #21
+ [term 6:REDUCE(with prod 22)] [term 8:REDUCE(with prod 22)]
+ [term 13:REDUCE(with prod 22)] [term 14:REDUCE(with prod 22)]
+ [term 16:REDUCE(with prod 22)] [term 17:REDUCE(with prod 22)]
+ [term 18:REDUCE(with prod 22)] [term 22:REDUCE(with prod 22)]
+From state #22
+ [term 5:SHIFT(to state 36)] [term 7:SHIFT(to state 35)]
+From state #23
+ [term 10:SHIFT(to state 32)]
+From state #24
+ [term 6:REDUCE(with prod 12)] [term 8:REDUCE(with prod 12)]
+ [term 13:REDUCE(with prod 12)] [term 14:REDUCE(with prod 12)]
+ [term 16:REDUCE(with prod 12)] [term 17:REDUCE(with prod 12)]
+ [term 18:REDUCE(with prod 12)] [term 22:REDUCE(with prod 12)]
+From state #25
+ [term 6:REDUCE(with prod 10)] [term 8:REDUCE(with prod 10)]
+ [term 13:REDUCE(with prod 10)] [term 14:REDUCE(with prod 10)]
+ [term 16:REDUCE(with prod 10)] [term 17:REDUCE(with prod 10)]
+ [term 18:REDUCE(with prod 10)] [term 22:REDUCE(with prod 10)]
+From state #26
+ [term 12:SHIFT(to state 28)]
+From state #27
+ [term 6:REDUCE(with prod 15)] [term 8:REDUCE(with prod 15)]
+ [term 13:REDUCE(with prod 15)] [term 14:REDUCE(with prod 15)]
+ [term 16:REDUCE(with prod 15)] [term 17:REDUCE(with prod 15)]
+ [term 18:REDUCE(with prod 15)] [term 22:REDUCE(with prod 15)]
+From state #28
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #29
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 31)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #30
+ [term 6:REDUCE(with prod 8)] [term 8:REDUCE(with prod 8)]
+ [term 13:REDUCE(with prod 8)] [term 14:REDUCE(with prod 8)]
+ [term 16:REDUCE(with prod 8)] [term 17:REDUCE(with prod 8)]
+ [term 18:REDUCE(with prod 8)] [term 22:REDUCE(with prod 8)]
+From state #31
+ [term 6:REDUCE(with prod 17)] [term 8:REDUCE(with prod 17)]
+ [term 13:REDUCE(with prod 17)] [term 14:REDUCE(with prod 17)]
+ [term 16:REDUCE(with prod 17)] [term 17:REDUCE(with prod 17)]
+ [term 18:REDUCE(with prod 17)] [term 22:REDUCE(with prod 17)]
+From state #32
+ [term 11:SHIFT(to state 33)]
+From state #33
+ [term 6:REDUCE(with prod 35)] [term 8:REDUCE(with prod 35)]
+ [term 13:REDUCE(with prod 35)] [term 14:REDUCE(with prod 35)]
+ [term 16:REDUCE(with prod 35)] [term 17:REDUCE(with prod 35)]
+ [term 18:REDUCE(with prod 35)] [term 22:REDUCE(with prod 35)]
+From state #34
+ [term 6:REDUCE(with prod 27)] [term 8:REDUCE(with prod 27)]
+ [term 9:SHIFT(to state 40)] [term 13:REDUCE(with prod 27)]
+ [term 14:REDUCE(with prod 27)] [term 16:REDUCE(with prod 27)]
+ [term 17:REDUCE(with prod 27)] [term 18:REDUCE(with prod 27)]
+ [term 19:SHIFT(to state 41)] [term 20:SHIFT(to state 38)]
+ [term 22:REDUCE(with prod 27)]
+From state #35
+ [term 6:REDUCE(with prod 33)] [term 8:REDUCE(with prod 33)]
+ [term 9:REDUCE(with prod 33)] [term 13:REDUCE(with prod 33)]
+ [term 14:REDUCE(with prod 33)] [term 16:REDUCE(with prod 33)]
+ [term 17:REDUCE(with prod 33)] [term 18:REDUCE(with prod 33)]
+ [term 19:REDUCE(with prod 33)] [term 20:REDUCE(with prod 33)]
+ [term 22:REDUCE(with prod 33)]
+From state #36
+ [term 6:REDUCE(with prod 32)] [term 8:REDUCE(with prod 32)]
+ [term 9:REDUCE(with prod 32)] [term 13:REDUCE(with prod 32)]
+ [term 14:REDUCE(with prod 32)] [term 16:REDUCE(with prod 32)]
+ [term 17:REDUCE(with prod 32)] [term 18:REDUCE(with prod 32)]
+ [term 19:REDUCE(with prod 32)] [term 20:REDUCE(with prod 32)]
+ [term 22:REDUCE(with prod 32)]
+From state #37
+ [term 6:REDUCE(with prod 28)] [term 8:REDUCE(with prod 28)]
+ [term 12:REDUCE(with prod 28)] [term 13:REDUCE(with prod 28)]
+ [term 14:REDUCE(with prod 28)] [term 16:REDUCE(with prod 28)]
+ [term 17:REDUCE(with prod 28)] [term 18:REDUCE(with prod 28)]
+ [term 22:REDUCE(with prod 28)]
+From state #38
+ [term 6:REDUCE(with prod 31)] [term 8:REDUCE(with prod 31)]
+ [term 12:REDUCE(with prod 31)] [term 13:REDUCE(with prod 31)]
+ [term 14:REDUCE(with prod 31)] [term 16:REDUCE(with prod 31)]
+ [term 17:REDUCE(with prod 31)] [term 18:REDUCE(with prod 31)]
+ [term 22:REDUCE(with prod 31)]
+From state #39
+ [term 6:REDUCE(with prod 25)] [term 8:REDUCE(with prod 25)]
+ [term 13:REDUCE(with prod 25)] [term 14:REDUCE(with prod 25)]
+ [term 16:REDUCE(with prod 25)] [term 17:REDUCE(with prod 25)]
+ [term 18:REDUCE(with prod 25)] [term 19:SHIFT(to state 41)]
+ [term 20:SHIFT(to state 38)] [term 22:REDUCE(with prod 25)]
+From state #40
+ [term 6:REDUCE(with prod 34)] [term 8:REDUCE(with prod 34)]
+ [term 13:REDUCE(with prod 34)] [term 14:REDUCE(with prod 34)]
+ [term 16:REDUCE(with prod 34)] [term 17:REDUCE(with prod 34)]
+ [term 18:REDUCE(with prod 34)] [term 19:REDUCE(with prod 34)]
+ [term 20:REDUCE(with prod 34)] [term 22:REDUCE(with prod 34)]
+From state #41
+ [term 6:REDUCE(with prod 30)] [term 8:REDUCE(with prod 30)]
+ [term 12:REDUCE(with prod 30)] [term 13:REDUCE(with prod 30)]
+ [term 14:REDUCE(with prod 30)] [term 16:REDUCE(with prod 30)]
+ [term 17:REDUCE(with prod 30)] [term 18:REDUCE(with prod 30)]
+ [term 22:REDUCE(with prod 30)]
+From state #42
+ [term 6:REDUCE(with prod 29)] [term 8:REDUCE(with prod 29)]
+ [term 12:REDUCE(with prod 29)] [term 13:REDUCE(with prod 29)]
+ [term 14:REDUCE(with prod 29)] [term 16:REDUCE(with prod 29)]
+ [term 17:REDUCE(with prod 29)] [term 18:REDUCE(with prod 29)]
+ [term 22:REDUCE(with prod 29)]
+From state #43
+ [term 6:REDUCE(with prod 24)] [term 8:REDUCE(with prod 24)]
+ [term 13:REDUCE(with prod 24)] [term 14:REDUCE(with prod 24)]
+ [term 16:REDUCE(with prod 24)] [term 17:REDUCE(with prod 24)]
+ [term 18:REDUCE(with prod 24)] [term 22:REDUCE(with prod 24)]
+From state #44
+ [term 6:REDUCE(with prod 26)] [term 8:REDUCE(with prod 26)]
+ [term 13:REDUCE(with prod 26)] [term 14:REDUCE(with prod 26)]
+ [term 16:REDUCE(with prod 26)] [term 17:REDUCE(with prod 26)]
+ [term 18:REDUCE(with prod 26)] [term 22:REDUCE(with prod 26)]
+From state #45
+ [term 3:REDUCE(with prod 6)] [term 4:REDUCE(with prod 6)]
+From state #46
+ [term 12:SHIFT(to state 47)]
+From state #47
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #48
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 49)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #49
+ [term 6:REDUCE(with prod 20)] [term 8:REDUCE(with prod 20)]
+ [term 13:REDUCE(with prod 20)] [term 14:REDUCE(with prod 20)]
+ [term 16:REDUCE(with prod 20)] [term 17:REDUCE(with prod 20)]
+ [term 18:REDUCE(with prod 20)] [term 22:REDUCE(with prod 20)]
+From state #50
+ [term 12:SHIFT(to state 52)]
+From state #51
+ [term 12:REDUCE(with prod 21)]
+From state #52
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #53
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 54)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #54
+ [term 6:REDUCE(with prod 18)] [term 8:REDUCE(with prod 18)]
+ [term 13:REDUCE(with prod 18)] [term 14:REDUCE(with prod 18)]
+ [term 16:REDUCE(with prod 18)] [term 17:REDUCE(with prod 18)]
+ [term 18:REDUCE(with prod 18)] [term 22:REDUCE(with prod 18)]
+From state #55
+ [term 12:SHIFT(to state 56)]
+From state #56
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #57
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 58)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #58
+ [term 6:REDUCE(with prod 19)] [term 8:REDUCE(with prod 19)]
+ [term 13:REDUCE(with prod 19)] [term 14:REDUCE(with prod 19)]
+ [term 16:REDUCE(with prod 19)] [term 17:REDUCE(with prod 19)]
+ [term 18:REDUCE(with prod 19)] [term 22:REDUCE(with prod 19)]
+From state #59
+ [term 12:SHIFT(to state 60)]
+From state #60
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #61
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 62)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #62
+ [term 6:REDUCE(with prod 16)] [term 8:REDUCE(with prod 16)]
+ [term 13:REDUCE(with prod 16)] [term 14:REDUCE(with prod 16)]
+ [term 16:REDUCE(with prod 16)] [term 17:REDUCE(with prod 16)]
+ [term 18:REDUCE(with prod 16)] [term 22:REDUCE(with prod 16)]
+From state #63
+ [term 0:REDUCE(with prod 1)]
+From state #64
+ [term 23:SHIFT(to state 65)]
+From state #65
+ [term 12:SHIFT(to state 66)]
+From state #66
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 14:SHIFT(to state 26)] [term 16:SHIFT(to state 16)]
+ [term 17:SHIFT(to state 15)] [term 18:SHIFT(to state 17)]
+ [term 22:SHIFT(to state 9)]
+From state #67
+ [term 6:SHIFT(to state 13)] [term 8:SHIFT(to state 22)]
+ [term 13:SHIFT(to state 68)] [term 14:SHIFT(to state 26)]
+ [term 16:SHIFT(to state 16)] [term 17:SHIFT(to state 15)]
+ [term 18:SHIFT(to state 17)] [term 22:SHIFT(to state 9)]
+From state #68
+ [term 0:REDUCE(with prod 3)]
+From state #69
+ [term 3:REDUCE(with prod 5)] [term 4:REDUCE(with prod 5)]
+From state #70
+ [term 0:REDUCE(with prod 0)]
+------------------------------
+-------- REDUCE_TABLE --------
+From state #0
+ [non term 1->state 5] [non term 2->state 4] [non term 3->state 2]
+ [non term 4->state 1]
+From state #1
+From state #2
+ [non term 1->state 70] [non term 4->state 69]
+From state #3
+From state #4
+From state #5
+From state #6
+From state #7
+From state #8
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 18]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #9
+From state #10
+From state #11
+From state #12
+From state #13
+ [non term 10->state 59] [non term 13->state 37] [non term 14->state 42]
+From state #14
+From state #15
+ [non term 16->state 55]
+From state #16
+ [non term 22->state 50]
+From state #17
+From state #18
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #19
+From state #20
+From state #21
+From state #22
+ [non term 11->state 34]
+From state #23
+From state #24
+From state #25
+From state #26
+From state #27
+From state #28
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 29]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #29
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #30
+From state #31
+From state #32
+From state #33
+From state #34
+ [non term 10->state 43] [non term 13->state 37] [non term 14->state 42]
+ [non term 15->state 39]
+From state #35
+From state #36
+From state #37
+From state #38
+From state #39
+ [non term 10->state 44] [non term 13->state 37] [non term 14->state 42]
+From state #40
+From state #41
+From state #42
+From state #43
+From state #44
+From state #45
+From state #46
+From state #47
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 48]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #48
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #49
+From state #50
+From state #51
+From state #52
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 53]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #53
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #54
+From state #55
+From state #56
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 57]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #57
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #58
+From state #59
+From state #60
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 61]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #61
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #62
+From state #63
+From state #64
+From state #65
+From state #66
+ [non term 5->state 21] [non term 6->state 11] [non term 7->state 67]
+ [non term 8->state 19] [non term 9->state 14] [non term 12->state 12]
+ [non term 16->state 23] [non term 17->state 25] [non term 18->state 10]
+ [non term 19->state 24] [non term 20->state 20] [non term 21->state 27]
+From state #67
+ [non term 5->state 21] [non term 6->state 30] [non term 8->state 19]
+ [non term 9->state 14] [non term 12->state 12] [non term 16->state 23]
+ [non term 17->state 25] [non term 18->state 10] [non term 19->state 24]
+ [non term 20->state 20] [non term 21->state 27]
+From state #68
+From state #69
+From state #70
+-----------------------------
+Closing files...
+------- CUP v0.10k Parser Generation Summary -------
+  0 errors and 2 warnings
+  24 terminals, 23 non-terminals, and 37 productions declared, 
+  producing 71 unique parse states.
+  2 terminals declared but not used.
+  0 non-terminals declared but not used.
+  0 productions never reduced.
+  0 conflicts detected (100 expected).
+  Code written to "Parser.java", and "TokenIds.java".
+---------------------------------------------------- (v0.10k)

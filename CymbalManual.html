@@ -1,0 +1,419 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Cymbal Overview & Manual</title>
+<h1>Cymbal Overview & Manual</h1>
+<style> body{ background-color: #E0EBEB; } p{ max-width: 700px;}
+ol {
+    counter-reset: item;
+}
+ol li {
+    display: block;
+    position: relative;
+}
+ol li:before {
+    content: counters(item, ".")".";
+    counter-increment: item;
+    position: absolute;
+    margin-right: 100%;
+    right: 10px; /* space between number and text */
+}
+table{
+	border-collapse: collapse;
+}
+td {
+	border: solid black 1px;
+	padding: 2px;
+}
+</style>
+</head>
+<body>
+<br/>
+<h2>What is Cymbal?</h2>
+<p>Cymbal is a simple, intuitive programming language designed to output basic MIDI
+in MIPS assembly language. It makes use of the MIDI syscall functionality of the
+MIPS architecture. The Cymbal language and compiler were both written by Tyler Harley,
+Harry Bartlett, and Terrence Tan in 2014 for the Compiler Construction course at Colby College.</p>
+
+<h3>Contents</h3>
+<ol>
+	<li><a href="#overview">Overview</a></li>
+	<li><a href="#manual">Manual</a></li>
+	<ol>
+		<li><a href="#songs">Songs</a></li>
+		<li><a href="#phrases">Phrases</a></li>
+		<li><a href="#notes">Notes</a></li>
+		<li><a href="#comments">Comments</a></li>
+		<li><a href="#controlBlocks">Control Blocks</a></li>
+		<ol>
+			<li><a href="#octaves">Octaves</a></li>
+            <li><a href="#volume">Volume</a></li>
+			<li><a href="#instruments">Instruments</a></li>
+		</ol>
+	</ol>
+</ol>
+
+<a name="overview"></a>
+<h2>Overview</h2>
+<p>Cymbal is a language which shies away from confusing symbolic syntax and grammar found
+in other commonly used languages. It is built around the common nomenclature and notation
+of music. Code is written in "quarter notes", "rests", and "octaves" rather than ints and floats
+and arrays.<br/><br/>Users can simply write out what note they want played and for what duration, and
+the corresponding MIDI sound will be produced.</p>
+
+<pre>
+<code>	// This produces an arpegiatted A Major chord
+	Half A4
+	Half C#4
+	Half E4</code></pre>
+
+
+<p>It's as simple as that. One note corresponds to one MIDI tone (note: due to limitations
+on the MIDI functionality of MIPS, MIDI chords sadly cannot be produced). You can organize 
+notes linearly or through a subroutine call structure. There are several different control 
+structures that will be mentioned in detail later, and they all follow a basic <em>block</em>
+form. Everything in Cymbal can be written in nested blocks. Whatever notes are written within
+certain blocks will have certain attributes when they play according to the <strong>nearest
+appropriate block.</strong> This means that notes (or <a href="#phrases">phrases</a>) played 
+will possess all the attributes of blocks they are nested within. However, if a note is 
+nested more than once within the same type of block, it will only be altered by the innermost 
+of those blocks. Also note that indentation and whitespace is not important in Cymbal, nor are
+semicolons!</p>
+
+<pre>
+<code>  
+	// If Block A and Block B are of DIFFERENT types
+	
+	<em>Block A</em> {
+		Quarter C3 // Will have properties of Block A
+		Quarter F3 // Will have properties of Block A
+		
+		<em>Block B</em> {
+			Quarter C4 // Will have properties of Blocks A and B
+			Quarter F4 // Will have properties of Blocks A and B
+		}
+		
+	}
+	 
+	// If Block A and Block B are of the SAME type
+
+	<em>Block A</em> {
+		Quarter C3 // Will have properties of Block A
+		Quarter F3 // Will have properties of Block A
+		
+		<em>Block B</em> {
+			Quarter C4 // Will have properties of Block B
+			Quarter F4 // Will have properties of Block B
+		}
+		
+	}
+	</code></pre>
+	
+<p>That's all there is to it. Now we'll describe the details of the Cymbal syntax, grammar,
+and semantics.</p><br/>
+
+<a name="manual"></a>
+<h2>Manual</h2><br/>
+<a name="songs"></a>
+<h3>Songs</h3>
+
+<p>A <strong>Song</strong> is the main element of a Cymbal file. When executed, the code starts
+when the Song block starts and ends when it ends. A file must have one and only one Song in order
+to play. Think of it like a <code>main</code> function of a C file or a Java program. Songs must
+also be given a name and a tempo in beats per minute (BPM). All names in Cymbal are surrounded 
+by double quotes. The proper implementation of a Song block is:</p>
+
+<pre>
+<code>
+	Song "MySong" 120{
+		...
+		...
+		...
+	}</code></pre>
+
+<a name="phrases"></a>	
+<h3>Phrases</h3>
+
+<p>A <strong>Phrase</strong> is a kind of user-defined macro that can be declared before the
+Song block starts. It can contain any code that the user might wish to reuse in several sections of
+the Song. Cymbal allows for as many Phrases to be written as wanted (but it does not allow Phrases to
+be written inside Phrases, or Songs.) A Phrase block might look like:</p>
+
+<pre>
+<code>
+	Phrase "Bb Scale" {
+		Quarter Bb3
+		Quarter C3
+		Quarter D3
+		Quarter Eb3
+		Quarter F3
+		Quarter G3
+		Quarter A4
+		Quarter Bb
+	}
+		...
+	Song "MySong" {
+		...
+	}
+	</code></pre>
+<p>To call a Phrase, simply write a the name of the Phrase like a subroutine call in the Song (or 
+another Phrase.) Be sure to remember to use double quotes, even when you call a Phrase:</p>
+<pre>
+<code>
+	Song "MySong" {
+		"Bb Scale"()
+	}</code></pre>
+	
+<a name="notes"></a>
+<h3>Notes</h3>
+
+<strong>Notes</strong> in Cymbal are expressed sequentially. Each Note requires two parts: the length
+and the pitch. Notes can also be given an optional octave to be played in, following the pitch.</p>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;Lengths are: <code>Whole, Half, Quarter, Eighth</code><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Pitches are: Ab-G#<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;Octaves are: 1-8
+
+<p>If a Note isn't given a specified octave (and it isn't within an Octave), it defaults to the octave
+3. <strong>Rests</strong> can also be a kind of Note in Cymbal. Rests are declared with a length followed
+by the keyword <code>Rest.</code></p>
+
+<a name="comments"></a>
+<h3>Comments</h3>
+
+<p><strong>Comments</strong> in Cymbal are just like comments in C or Java. You can have 
+both single line ( // ) comments or multi-line ( /* ...... */ ) comments.</p>
+	
+<a name="controlBlocks"></a>
+<h3>Control Blocks</h3>
+
+<p>The following control blocks - <strong>Octave, Volume,</strong> and <strong>Instrument,</strong>
+are ways the user can encapsulate sets of Notes or Phrase calls to sound differently. Any of these blocks
+can be used within Songs or Phrases and can be nested as many times as you want.</p>
+
+<a name="octaves"></a>
+<h3>Octaves</h3>
+
+<p><strong>Octaves</strong> indicate that any Notes played within them will be played at the octave given.
+You can also use '+' or '-' modifiers to change a specific note relative to its Octave block. (Note that you
+cannot go below octave 1 and cannot go higher than octave 8).<br/>If you give a note a defined octave to play
+in, it will override the Octave block.</p>
+
+<pre>
+<code>
+	Octave 5 {
+		Quarter C       // 5
+		Quarter D       // 5
+		Quarter E       // 5
+		Quarter F2      // 2
+		Quarter G3      // 3
+		Quarter A+      // 6
+	}
+</code>
+</pre>
+
+<a name="volume"></a>
+<h3>Volume</h3>
+
+<p><strong>Volume</strong> blocks allow the user to specify one of five different volumes given by keywords. There
+is a <code>default</code> value with a MIDI volume value of 75. The user can also define <code>piano, mesopiano, forte,</code> and <code>mesoforte.</code></p>
+
+<pre>
+<code>
+	Volume piano {
+		/**
+		 * Everything in here plays
+		 * in a piano volume
+		 */
+	}
+</code>
+</pre>
+
+<a name="instruments"></a>
+<h3>Instruments</h3>
+
+<p><strong>Instrument</strong> blocks give all Notes and Phrases a specified MIDI instrument. There are a total
+of 129 different instruments to choose from given in the table below. Note that some instruments naturally sound 
+louder or quieter than others.</p>
+
+<table>
+<tr>
+<td>Acoustic Grand Piano</td>
+<td>Bright Acoustic Piano</td>
+<td>Electric Grand Piano</td>
+<td>Honky-tonk Piano</td>
+<td>Electric Piano</td>
+<td>Electric Piano 2</td>
+<td>Harpsichord</td>
+<td>Clavinet</td>
+</tr>
+<tr>
+<td>Celesta</td>
+<td>Glockenspiel</td>
+<td>Music Box</td>
+<td>Vibraphone</td>
+<td>Marimba</td>
+<td>Xylophone</td>
+<td>Tubular Bells</td>
+<td>Dulcimer</td>
+</tr>
+<tr>
+<td>Drawbar Organ</td>
+<td>Percussive Organ</td>
+<td>Rock Organ</td>
+<td>Church Organ</td>
+<td>Reed Organ</td>
+<td>Accordion</td>
+<td>Harmonica</td>
+<td>Tango Accordion</td>
+</tr>
+<tr>
+<td>Nylon Guitar</td>
+<td>Steel Guitar</td>
+<td>Jazz Guitar</td>
+<td>Clean Guitar</td>
+<td>Muted Guitar</td>
+<td>Overdriven Guitar</td>
+<td>Distortion Guitar</td>
+<td>Guitar Harmonics</td>
+</tr>
+<tr>
+<td>Acoustic Bass</td>
+<td>Finger Bass</td>
+<td>Pick Bass</td>
+<td>Fretless Bass</td>
+<td>Slap Bass 1</td>
+<td>Slap Bass 2</td>
+<td>Synth Bass 1</td>
+<td>Synth Bass 2</td>
+</tr>
+<tr>
+<td>Violin</td>
+<td>Viola</td>
+<td>Cello</td>
+<td>Contrabass</td>
+<td>Tremolo Strings</td>
+<td>Pizzicato Strings</td>
+<td>Orchestral Harp</td>
+<td>Timpani</td>
+</tr>
+<tr>
+<td>String Ensemble 1</td>
+<td>String Ensemble 2</td>
+<td>Synth Strings 1</td>
+<td>Synth Strings 2</td>
+<td>Choir Aahs</td>
+<td>Voice Oohs</td>
+<td>Synth Choir</td>
+<td>Orchestra Hit</td>
+</tr>
+<tr>
+<td>Trumpet</td>
+<td>Trombone</td>
+<td>Tuba</td>
+<td>Muted Trumpet</td>
+<td>French Horn</td>
+<td>Brass Section</td>
+<td>Synth Brass 1</td>
+<td>Synth Brass 2</td>
+</tr>
+<tr>
+<td>Soprano Sax</td>
+<td>Alto Sax</td>
+<td>Tenor Sax</td>
+<td>Baritone Sax</td>
+<td>Oboe</td>
+<td>English Horn</td>
+<td>Bassoon</td>
+<td>Clarinet</td>
+</tr>
+<tr>
+<td>Piccolo</td>
+<td>Flute</td>
+<td>Recorder</td>
+<td>Pan Flute</td>
+<td>Blown bottle</td>
+<td>Shakuhachi</td>
+<td>Whistle</td>
+<td>Ocarina</td>
+</tr>
+<tr>
+<td>Square Synth</td>
+<td>Sawtooth Synth</td>
+<td>Calliope Synth</td>
+<td>Chiff Synth</td>
+<td>Charang Synth</td>
+<td>Voice Synth</td>
+<td>Fifths Synth</td>
+<td>Bass/Lead Synth</td>
+</tr>
+<tr>
+<td>Synth Pad Warm</td>
+<td>Synth Pad Polysynth</td>
+<td>Synth Pad Choir</td>
+<td>Synth Pad Bowed</td>
+<td>Synth Pad Metallic</td>
+<td>Synth Pad Halo</td>
+<td>Synth Pad Sweep</td>
+<td>Synth Pad Rain</td>
+</tr>
+<tr>
+<td>Rain</td>
+<td>Soundtrack</td>
+<td>Crystal</td>
+<td>Atmosphere</td>
+<td>Brightness</td>
+<td>Brightness</td>
+<td>Goblins</td>
+<td>Echoes</td>
+</tr>
+<tr>
+<td>Sci-Fi</td>
+<td>Sitar</td>
+<td>Banjo</td>
+<td>Shamisen</td>
+<td>Koto</td>
+<td>Kalimba</td>
+<td>Bagpipe</td>
+<td>Fiddle</td>
+</tr>
+<tr>
+<td>Shanai</td>
+<td>Tinkle Bell</td>
+<td>Agogo</td>
+<td>Steel Drums</td>
+<td>Woodblock</td>
+<td>Taiko Drum</td>
+<td>Melodic Tom</td>
+<td>Synth Drum</td>
+</tr>
+<tr>
+<td>Reverse Cymbal</td>
+<td>Guitar Fret Noise</td>
+<td>Breath Noise</td>
+<td>Seashore</td>
+<td>Bird Tweet</td>
+<td>Telephone Ring</td>
+<td>Helicopter</td>
+<td>Applause</td>
+</tr>
+<tr>
+<td>Gunshot</td>
+</tr>
+</table>
+
+<p>Remember that the Instrument names must be within double quotes, as shown below:</p>
+
+<pre>
+<code>
+	Instrument "Trumpet" {
+		/**
+		 * All notes here will sound like
+		 * a MIDI trumpet
+		 */
+	}
+</code>
+</pre>
+</body>
+</html>
