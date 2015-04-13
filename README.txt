@@ -10,6 +10,10 @@ CymbalManual.html file.
 *Note* - When working in Eclipse Kepler, Eclipse seems to think that the project has errors. The Compiler does, however,
 run error-free.
 
+Bantam Java changelog below
+
+-------------------------------------------
+
 Bantam Java Compiler Project
 Extended Language Version 1.3
   Changes from 1.2:
