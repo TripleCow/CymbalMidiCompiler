@@ -1,14 +1,9 @@
 Cymbal Compiler
 
-This is a compiler written in Java for the Cymbal language. Both the compiler and the Cymbal language were written by Colby
-College students Tyler Harley, Terrence Tan, and Harry Bartlett in 2014 for the course CS 461: Object-Oriented Systems.
-The compiler is based on the Bantam Java Compiler Project, an educational software package that compiles a subset of Java
-(BantamJava) into MIPS machine code. The Cymbal compiler makes use of the MIDI MIPS syscalls in the MARS MIPS simulator
-(download: http://courses.missouristate.edu/kenvollmar/mars/). Documentation for the language can be found in the
+This is a compiler written in Java for the Cymbal language. Both the compiler and the Cymbal language were written by Colby College students Tyler Harley, Terrence Tan, and Harry Bartlett in 2014 for the course CS 461: Object-Oriented Systems. The compiler is based on the Bantam Java Compiler Project, an educational software package that compiles a subset of Java (BantamJava) into MIPS machine code. The Cymbal compiler makes use of the MIDI MIPS syscalls in the MARS MIPS simulator(download: http://courses.missouristate.edu/kenvollmar/mars/). Documentation for the language can be found in the 
 CymbalManual.html file.
 
-*Note* - When working in Eclipse Kepler, Eclipse seems to think that the project has errors. The Compiler does, however,
-run error-free.
+*Note* - When working in Eclipse Kepler, Eclipse seems to think that the project has errors. The Compiler does, however, run error-free.
 
 Bantam Java changelog below
 
